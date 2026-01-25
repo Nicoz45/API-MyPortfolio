@@ -6,6 +6,8 @@ import AuthController from "../controllers/Auth.controller.js";
 
 const authRoutes = Router()
 
+console.log("✅ Auth routes initialized")
+
 /* authRoutes.post("/login",
     validateRequest(loginSchema),
     AuthController.login
@@ -16,7 +18,7 @@ authRoutes.post("/register",
     AuthController.register
 )
 
-authRoutes.post("/verify_email:token",
+authRoutes.get("/verify-email/:token",
     AuthController.verifyEmail
 )
 

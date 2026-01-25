@@ -18,9 +18,20 @@ class EmailService {
             console.log("Verification email sent to:", email)
         } catch (error) {
             console.error("Error sending verification email:", error.message)
-            // No lanzar error para que el registro continúe
-        }
+            if (error.status) {
+                return {
+                    ok: false,
+                    message: error.message,
+                    status: error.status
+                } 
+            }
+            else({
+                ok: false,
+                message: "Internal Server Error",
+                status: 500
+            })
     }
+}
 }
 
 export default EmailService

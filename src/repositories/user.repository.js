@@ -3,7 +3,7 @@ import User from "../Models/User.model.js";
 class UserRepository {
     static async createUser(userData){
         try {
-            const user = await User.insertOne(userData)
+            const user = await User.create(userData)
             console.log("User created:", user)
             return user
         } catch (error) {

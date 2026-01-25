@@ -8,7 +8,8 @@ import authRoutes from "./routes/auth.routes.js"
 
 // Conectar a MongoDB de forma asincrónica sin bloquear el servidor
 connectToMongoDB().catch(err => {
-    console.error("MongoDB connection failed, but server will continue:", err.message)
+    console.error("❌ MongoDB connection failed, but server will continue:", err.message)
+    console.error("Stack:", err.stack)
 })
 
 const app = express()
@@ -29,7 +30,7 @@ app.use("/auth", authRoutes)
 const PORT = ENVIRONMENT.PORT || 8080
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+    console.log(`✅ Server running on port ${PORT}`)
 })
 
 /* mailTransporter.sendMail({

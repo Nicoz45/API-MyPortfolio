@@ -5,9 +5,11 @@ import { ServerError } from "../services/Error.service.js"
 class AuthController {
     static async register(req, res){
         try {
+            console.log("📝 Register request received:", {email: req.body.email, username: req.body.username})
             const {email, username, password, repeatPassword} = req.body
             
             const user = await registerUserCase.execute({email, username, password, repeatPassword})
+            console.log("✅ User registered successfully:", user._id)
             const userinfo = res.status(201).json({
                 ok: true,
                 message: "User registered successfully. Please verify your email.",
@@ -19,6 +21,8 @@ class AuthController {
             })
             console.log(userinfo)
         } catch (error) {
+            console.error("❌ Register error:", error.message)
+            console.error("Stack:", error.stack)
             const statusCode = error instanceof ServerError ? error.status : 500
             res.status(statusCode).json({
                 ok: false,
@@ -30,14 +34,18 @@ class AuthController {
 
     static async verifyEmail(req, res){
         try {
+            console.log("📝 Email verification request received")
             const {token} = req.params
             await AuthService.verifyEmail(token)
+            console.log("✅ Email verified successfully")
             res.status(200).json({
                 ok: true,
                 message: "Email verified successfully",
                 status: 200
             })
         } catch (error) {
+            console.error("❌ Email verification error:", error.message)
+            console.error("Stack:", error.stack)
             if(error.status){
                 res.send({
                     ok: false,
