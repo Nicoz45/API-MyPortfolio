@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Esquema para los archivos de código asociados a los proyectos
 const fileSchema = new mongoose.Schema({
     project: {
         type: mongoose.Schema.Types.ObjectId,

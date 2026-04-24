@@ -42,6 +42,16 @@ class UserRepository {
         }
     }
 
+    static async getByUsername(username){
+        try {
+            const userFound = await User.findOne({username: username, active: true})
+            return userFound
+        } catch (error) {
+            console.error("Error getting user by username:", error)
+            throw new Error("Could not get user by username")
+        }
+    }
+
     static async deleteById(user_id){
         try {
             const result = await User.findByIdAndDelete(user_id)

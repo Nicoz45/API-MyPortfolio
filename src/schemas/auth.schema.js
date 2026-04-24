@@ -44,9 +44,13 @@ export const registerSchema = joi.object({
 })
 
 export const loginSchema = joi.object({
-    emailOrUsername: joi.string()
+    emailOrUsername: joi.alternatives().try(
+        joi.string().trim().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'org', 'es'] } }),
+        joi.string().trim().min(4).max(30).pattern(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/)
+    )
         .required()
         .messages({
+            'alternative.match': 'Enter a valid email or username',
             'string.empty': 'Email or username is required',
             'any.required': 'Email or username is required'
         }),

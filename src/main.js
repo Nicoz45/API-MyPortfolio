@@ -5,6 +5,8 @@ import cors from "cors"
 import mailTransporter from "./config/mailTransporter.config.js"
 import ENVIRONMENT from "./config/env.config.js"
 import authRoutes from "./routes/auth.routes.js"
+import { projectRoutes } from "./routes/project.routes.js"
+import {userRoutes} from "./routes/user.routes.js"
 
 // Conectar a MongoDB de forma asincrónica sin bloquear el servidor
 connectToMongoDB().catch(err => {
@@ -26,6 +28,8 @@ app.get("/status", (req, res) => {
 })
 
 app.use("/auth", authRoutes)
+app.use("/projects", projectRoutes)
+app.use("/user", userRoutes)
 
 const PORT = ENVIRONMENT.PORT || 8080
 

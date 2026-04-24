@@ -1,6 +1,6 @@
 import Project from "../Models/Project.model.js";
 
-class projectRepository {
+class ProjectRepository {
     static async createProject(project_data) {
         try {
             const projectCreated = await Project.create(project_data)
@@ -55,11 +55,14 @@ class projectRepository {
         }
     }
 
-    static async addStar(project_Id) {
+    static async addStar(projectId) {
         try {
             const project = await Project.findByIdAndUpdate(
-                project_Id,
-                { $inc: { stars: 1 } },
+                projectId,
+                {
+                    $inc: {stars: 1},
+                    $push: {starredBy: user.Id}
+                },
                 { new: true }
             );
             return project
@@ -78,4 +81,4 @@ class projectRepository {
     }
 }
 
-export default projectRepository;
+export default ProjectRepository

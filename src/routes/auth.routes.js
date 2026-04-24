@@ -8,10 +8,10 @@ const authRoutes = Router()
 
 console.log("✅ Auth routes initialized")
 
-/* authRoutes.post("/login",
+authRoutes.post("/login",
     validateRequest(loginSchema),
     AuthController.login
-) */
+)
 
 authRoutes.post("/register",
     validateRequest(registerSchema),

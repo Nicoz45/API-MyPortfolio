@@ -22,7 +22,11 @@ const projectSchema = new mongoose.Schema({
     stars:{
         type: Number,
         default: 0
-    }
+    },
+    starredBy: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }]
 }, {timestamps: true})
 
 const Project = mongoose.model("Project", projectSchema)
