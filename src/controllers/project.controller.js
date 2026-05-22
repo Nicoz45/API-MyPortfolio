@@ -55,6 +55,27 @@ class ProjectController {
         }
     }
 
+    static async getPublicProjects(req, res){
+        try {
+            const publicProjects = await ProjectService.getPublicProjects()
+            return res.status(200).json({
+                ok: true,
+                message: "Public projects retrieved successfully",
+                projects: publicProjects,
+                status: 200
+            })
+        } catch (error) {
+            console.error("Error getting public projects ", error.message)
+            console.error("Stack ", error.stack)
+            const statusCode = error instanceof ServerError ? error.status : 500;
+            return res.status(statusCode).json({
+                ok: false,
+                message: error.message,
+                status: statusCode,
+            })
+        }
+    }
+
     static async getByOwner(req, res){
         try {
             // el owner viene por params, no por query ni body
@@ -76,6 +97,33 @@ class ProjectController {
             console.error("Stack ", error.stack);
         }
     }
+
+    static async getProjectsByTech(req, res){
+        try {
+            const {tech} = req.params
+            if(!tech){
+                throw new ServerError(400, "Tech parameter is required")
+
+                const projectsByTech = await ProjectService.findByTechStack(tech)
+                return res.status(200).json({
+                    ok: true,
+                    message: "Projects retrieved successfully",
+                    projects: projectsByTech,
+                    status: 200
+                })
+            }
+        } catch (error) {
+            console.error("Error getting projects by tech ", error.message)
+            console.error("Stack ", error.stack)
+            const statusCode = error instanceof ServerError ? error.status : 500
+            return res.status(statusCode).json({
+                ok: false,
+                message: error.message,
+                status: statusCode
+            })
+        }
+    }
+        
 
     static async addStar(req, res){
         try {

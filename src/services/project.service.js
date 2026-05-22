@@ -48,7 +48,7 @@ class ProjectService {
     }
 
     /* --------- public service methods --------- */
-    static async createProject(project_data) {
+    static async createProject(projesct_data) {
         try {
             // Desestructuramos el owner y el title de project_data
             const { owner, title } = project_data || {}

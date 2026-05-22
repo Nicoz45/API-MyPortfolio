@@ -5,12 +5,12 @@ import ProjectController from "../controllers/project.controller.js";
 
 
 export const projectRoutes = Router()
-/*
+
 // Públicas - no requieren autenticación
 projectRoutes.get("/public", ProjectController.getPublicProjects)
 projectRoutes.get("/tech/:tech", ProjectController.getProjectsByTech)
 // opcionalmente buscar por dueño
-projectRoutes.get("/owner/:owner", ProjectController.getProjectsByOwner)
+projectRoutes.get("/owner/:owner", ProjectController.getByOwner)
 
 // Creación y modificación requieren usuario autenticado */
 projectRoutes.post("/",
