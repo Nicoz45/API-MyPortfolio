@@ -2,9 +2,9 @@ import { ServerError } from "../services/Error.service.js"
 import ProjectService from "../services/project.service.js"
 
 class ProjectController {
-    static async createProject (req, res) {
+    static async createProject(req, res) {
         try {
-            const {owner, title, description, techStack, repositoryLink, liveDemoLink, visibility} = req.body
+            const { owner, title, description, techStack, repositoryLink, liveDemoLink, visibility } = req.body
             const projectCreated = await ProjectService.createProject({
                 owner,
                 title,
@@ -33,9 +33,9 @@ class ProjectController {
         }
     }
 
-    static async getById (req, res){
+    static async getById(req, res) {
         try {
-            const {project} = req
+            const { project } = req
             const projectSelected = await ProjectService.getProjectById(project._id)
             return res.status(201).json({
                 ok: true,
@@ -55,7 +55,7 @@ class ProjectController {
         }
     }
 
-    static async getPublicProjects(req, res){
+    static async getPublicProjects(req, res) {
         try {
             const publicProjects = await ProjectService.getPublicProjects()
             return res.status(200).json({
@@ -76,10 +76,10 @@ class ProjectController {
         }
     }
 
-    static async getByOwner(req, res){
+    static async getByOwner(req, res) {
         try {
             // el owner viene por params, no por query ni body
-            const {owner} = req.params;
+            const { owner } = req.params;
             // corroboramos que el owner exista y sea un ID válido
             if (!owner) {
                 throw new ServerError(400, "Owner parameter is required")
@@ -98,20 +98,19 @@ class ProjectController {
         }
     }
 
-    static async getProjectsByTech(req, res){
+    static async getProjectsByTech(req, res) {
         try {
-            const {tech} = req.params
-            if(!tech){
+            const { tech } = req.params
+            if (!tech) {
                 throw new ServerError(400, "Tech parameter is required")
-
-                const projectsByTech = await ProjectService.findByTechStack(tech)
-                return res.status(200).json({
-                    ok: true,
-                    message: "Projects retrieved successfully",
-                    projects: projectsByTech,
-                    status: 200
-                })
             }
+            const projectsByTech = await ProjectService.findByTechStack(tech)
+            return res.status(200).json({
+                ok: true,
+                message: "Projects retrieved successfully",
+                projects: projectsByTech,
+                status: 200
+            })
         } catch (error) {
             console.error("Error getting projects by tech ", error.message)
             console.error("Stack ", error.stack)
@@ -123,11 +122,11 @@ class ProjectController {
             })
         }
     }
-        
 
-    static async addStar(req, res){
+
+    static async addStar(req, res) {
         try {
-            const {project} = req
+            const { project } = req
             const projectStarred = await ProjectService.addStar(project)
             return res.status(200).json({
                 ok: true,
@@ -147,9 +146,9 @@ class ProjectController {
         }
     }
 
-    static async updateProject (req, res) {
+    static async updateProject(req, res) {
         try {
-            const {project} = req;
+            const { project } = req;
             const update_data = req.body;
             const projectUpdated = await ProjectService.updateProject(project._id, update_data)
             return res.status(200).json({
@@ -168,10 +167,10 @@ class ProjectController {
             })
         }
     }
-    
-    static async deleteProject (req, res){
+
+    static async deleteProject(req, res) {
         try {
-            const {project} = req;
+            const { project } = req;
             const projectDeleted = await ProjectService.deleteProject(project._id);
             return res.status(200).json({
                 ok: true,

@@ -61,7 +61,7 @@ class ProjectRepository {
                 projectId,
                 {
                     $inc: {stars: 1},
-                    $push: {starredBy: user.Id}
+                    $push: {starredBy: userId}
                 },
                 { new: true }
             );
