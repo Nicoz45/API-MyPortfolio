@@ -28,10 +28,25 @@ class ProjectRepository {
         }
     }
 
-    static async getPublicProjects() {
+    static async getPublicProjects(page = 1, limit = 10) {
         try {
-            const projects = await Project.find({ visibility: "public" }).populate("owner", "name email")
-            return projects
+            const skip = (page - 1) * limit
+            // 
+            // Para paginar correctamente, necesitamos el total de proyectos públicos para calcular el total de páginas
+            // Sin embargo, para optimizar la consulta, podemos ejecutar ambas operaciones (contar y obtener) en paralelo usando Promise.all
+            // Esto evita hacer dos consultas secuenciales a la base de datos, lo que mejora el rendimiento
+            // Primero obtenemos el total de proyectos públicos
+            // Luego obtenemos la página actual de proyectos públicos usando skip y limit para paginar correctamente
+            // De esta forma, podemos retornar tanto los proyectos como el total en una sola respuesta, lo que facilita la implementación de la paginación en el frontend
+            const [projects, total] = await Promise.all([
+                Project.find({visibility})
+                .populate("owner", "name email")
+                .skip(skip)
+                .limit(limit),
+                Project.countDocuments({visibility: "public"})
+            ])
+
+            return {projects, total, page, limit, totalPages: Math.ceil(total / limit)}
         } catch (error) {
             throw new Error(`Error getting public projects: ${error.message}`)
         }
@@ -55,19 +70,33 @@ class ProjectRepository {
         }
     }
 
-    static async addStar(projectId) {
+    static async addStar(projectId, userId) {
         try {
             const project = await Project.findByIdAndUpdate(
                 projectId,
                 {
-                    $inc: {stars: 1},
-                    $push: {starredBy: userId}
+                    $inc: { stars: 1 },
+                    $addToSet: { starredBy: userId }
                 },
                 { new: true }
             );
             return project
         } catch (error) {
             throw new Error(`Error adding star: ${error.message}`)
+        }
+    }
+
+    static async removeStar(projectId, userId) {
+        try {
+            const project = await Project.findByIdAndUpdate(
+                projectId,
+                {
+                    $inc: { stars: -1 }, $pull: { starredBy: userId }
+                },
+                { new: true }
+            )
+        } catch (error) {
+
         }
     }
 

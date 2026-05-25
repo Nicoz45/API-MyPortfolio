@@ -4,7 +4,7 @@ import mailTransporter from "../config/mailTransporter.config.js";
 class EmailService {
     static async sendVerificationEmail(email, token) {
         try {
-            const verificationURL = `http://localhost:${ENVIRONMENT.PORT}/auth/verify-email/${token}`;
+            const verificationURL = `${ENVIRONMENT.LOCAL_HOST}/auth/verify-email/${token}`;
 
             await mailTransporter.sendMail({
                 from: ENVIRONMENT.GMAIL_USER,

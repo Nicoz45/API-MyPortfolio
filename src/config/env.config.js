@@ -8,7 +8,9 @@ const ENVIRONMENT = {
     PORT: process.env.PORT,
     DB_NAME: process.env.DB_NAME,
     DB_LOCAL_HOST: process.env.DB_LOCAL_HOST,
-    JWT_SECRET: process.env.JWT_SECRET
+    JWT_SECRET: process.env.JWT_SECRET,
+    LOCAL_HOST: process.env.LOCAL_HOST,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET
 }
 console.log(ENVIRONMENT);
 export default ENVIRONMENT

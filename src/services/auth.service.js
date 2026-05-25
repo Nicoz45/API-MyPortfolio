@@ -6,8 +6,14 @@ import EmailService from "./email.service.js";
 import { ServerError } from "./Error.service.js";
 
 class AuthService {
+    /* Helpers */
+    static _generateTokens(payload) {
+        const accesToken = jwt.sign(payload, ENVIRONMENT.JWT_SECRET, { expiresIn: '15m' })
+        const refreshToken = jwt.sign(payload, ENVIRONMENT.JWT_REFRESH_SECRET, { expiresIn: '7d' })
+    }
+
     static async register({ email, username, password, repeatPassword }) {
-        console.log("🔐 AuthService.register() called for: ", email )
+        console.log("🔐 AuthService.register() called for: ", email)
         if (password !== repeatPassword) {
             console.error("❌ Passwords do not match")
             throw new Error("Passwords do not match")
@@ -38,13 +44,13 @@ class AuthService {
 
         const safeUser = (typeof userCreated.toObject === 'function')
             ? userCreated.toObject()
-            : { ...userCreated}
-        if(safeUser.passwordHash) delete safeUser.passwordHash
+            : { ...userCreated }
+        if (safeUser.passwordHash) delete safeUser.passwordHash
 
         console.log("📧 Sending verification email to:", email)
         await EmailService.sendVerificationEmail(email, token)
         console.log("✅ Verification email sent")
-        return {token, user: safeUser}
+        return { token, user: safeUser }
     }
 
     static async verifyEmail(token) {
@@ -88,48 +94,47 @@ class AuthService {
                 : await UserRepository.getByUsername(emailOrUsername)
 
             // Si no se encuentra el usuario, lanzamos un error 404(not found)
-            if(!userFound){
+            if (!userFound) {
                 console.error("❌ User not found with identifier:", emailOrUsername)
                 throw new ServerError(404, "User not found")
             }
 
             // Verificamos que el usuario haya confirmado su email, si no es así, lanzamos un error 403 (forbidden)
-            if(!userFound.verified_email){
+            if (!userFound.verified_email) {
                 console.error("❌ Email not verified for user:", emailOrUsername)
                 throw new ServerError(403, 'Email not verified. Please verify your email before logging in.')
             }
             // Comparamos la contraseña proporcionada con el hash almacenado
             const passwordMatch = await bcrypt.compare(password, userFound.passwordHash)
             // Si la contraseña no coincide, lanzamos un error 401(unauthorized)
-            if(!passwordMatch){
+            if (!passwordMatch) {
                 console.error("❌ Incorrect password for user: ", emailOrUsername)
                 throw new ServerError(401, 'Incorrect Password')
             }
 
             // Si todo es correcto, generamos un token JWT con la información del usuario
-            const token = jwt.sign({
+            const { accesToken, refreshToken } = this._generateTokens({
                 user_id: userFound._id,
                 email: userFound.email,
                 username: userFound.username
-            }, ENVIRONMENT.JWT_SECRET, { expiresIn: '24h' })
-
+            })
             // Devolvemos el token y la información del usuario (sin el hash de la contraseña)
             const safeUser = (typeof userFound.toObject === 'function')
                 ? userFound.toObject()
                 : { ...userFound }
-                // Eliminamos el hash de la contraseña antes de devolver la información del usuario
+            // Eliminamos el hash de la contraseña antes de devolver la información del usuario
             if (safeUser.passwordHash) delete safeUser.passwordHash
-            return { token, user: safeUser }
+            return { accesToken, refreshToken, user: safeUser }
 
 
         } catch (error) {
-            if(error instanceof ServerError){
+            if (error instanceof ServerError) {
                 throw error
             }
-            else{
+            else {
                 console.error("❌ Unexpected error in login:", error.message)
                 console.error("Stack:", error.stack)
-                throw new ServerError(500, error.message || 'Internal error logging in')    
+                throw new ServerError(500, error.message || 'Internal error logging in')
             }
         }
     }

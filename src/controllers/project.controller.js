@@ -57,11 +57,13 @@ class ProjectController {
 
     static async getPublicProjects(req, res) {
         try {
-            const publicProjects = await ProjectService.getPublicProjects()
+            const page = parseInt(req.query.page) || 1
+            const limit = parseInt(req.query.limit) || 10
+            const result = await ProjectService.getPublicProjects(page, limit)
             return res.status(200).json({
                 ok: true,
                 message: "Public projects retrieved successfully",
-                projects: publicProjects,
+                ...result,
                 status: 200
             })
         } catch (error) {
@@ -124,10 +126,11 @@ class ProjectController {
     }
 
 
-    static async addStar(req, res) {
+    static async toggleStar(req, res) {
         try {
             const { project } = req
-            const projectStarred = await ProjectService.addStar(project)
+            const user_id = req.user._id
+            const projectStarred = await ProjectService.toggleStar(project._id, user_id)
             return res.status(200).json({
                 ok: true,
                 message: "Project starred successfully",
@@ -182,7 +185,7 @@ class ProjectController {
             console.error("Error deleting the project ", error.message);
             console.error("Stack ", error.stack);
             const statusCode = error instanceof ServerError ? error.status : 500;
-            return res.status(statusCode).jsom({
+            return res.status(statusCode).json({
                 ok: false,
                 message: error.message,
                 status: statusCode

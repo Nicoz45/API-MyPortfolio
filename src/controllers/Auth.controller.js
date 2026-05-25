@@ -67,11 +67,12 @@ class AuthController {
     static async login(req, res) {
         try {
             const {emailOrUsername, password} = req.body
-            const { token, user } = await loginUserCase.execute({emailOrUsername, password})
+            const { accesToken, refreshToken, user } = await loginUserCase.execute({emailOrUsername, password})
             const userInfo = res.status(200).json({
                 ok: true,
                 message: "Login successful",
-                token,
+                accesToken,
+                refreshToken,
                 user: { email: user.email, username: user.username }
             })
                 console.log("✅ Login successful for user:", user._id)

@@ -36,7 +36,8 @@ class UserController {
             return res.status(201).json({
                 ok: true,
                 message: "Users successfully acquired",
-                status: 201
+                status: 201,
+                users: allUsers
             })
         } catch (error) {
             console.error("Error geting all users", error.message)
@@ -58,6 +59,7 @@ class UserController {
                 ok: true,
                 message: "User successfully acquired",
                 status: 201,
+                user: userFound
             })
         } catch (error) {
             console.error("Error retrieving the user", error.message)
@@ -78,7 +80,8 @@ class UserController {
             return res.status(201).json({
                 ok: true,
                 message: "User successfully acquired",
-                status: 201
+                status: 201,
+                user: userFound
             })
         } catch (error) {
             console.error("Error retrieving the user", error.message)
@@ -100,6 +103,7 @@ class UserController {
                 ok: true,
                 message: "User successfully adquired",
                 status: 201,
+                user: userFound
             })
         } catch (error) {
             console.error("Error retrieving the user", error.message)
@@ -119,7 +123,9 @@ class UserController {
             const userToDelete = await UserService.deleteUserById(user._id)
             return res.status(200).json({
                 ok: true,
-                message: "User successfully removed"
+                message: "User successfully removed",
+                status: 200,
+                userDeleting: userToDelete
             })
         } catch (error) {
             console.error("Error retrieving the user", error.message)
@@ -141,7 +147,8 @@ class UserController {
             return res.status(200).json({
                 ok: true,
                 message: "User successfully updated",
-                status: 200
+                status: 200,
+                userUpdated: userUpdated
             })
         } catch (error) {
             console.error("Error retrieving the user", error.message)

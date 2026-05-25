@@ -176,21 +176,19 @@ class ProjectService {
         }
     }
 
-    static async addStar(project_id){
-        try {
-            if(!mongoose.Types.ObjectId.isValid(project_id)){
-                throw new ServerError(400, "Invalid project Id")
-            }
-
-            const addStarToProject = await ProjectRepository.addStar(project_id)
-            return addStarToProject
-        } catch (error) {
-            if(error instanceof ServerError){
-                throw error
-            }
-            console.error("Unexpected error in ProjectService", error.message)
-            throw new ServerError(500, error.message || "Error adding a star to the project")
+    static async toggleStar(project_id, user_id){
+        const project = await ProjectRepository.getProjectById(project_id)
+        if(!project){
+            throw new ServerError(404, "Project not found")
         }
+        const alreadyStarred = project.starredBy.some(
+            id => id.toString() === user_id.toString())
+
+        if(alreadyStarred){
+            return await ProjectRepository.removeStar(project_id, user_id)
+        }
+        const projectStarred = await ProjectRepository.addStar(project_id, user_id)
+        return projectStarred
     }
 }
 
