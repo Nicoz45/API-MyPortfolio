@@ -108,9 +108,9 @@ class ProjectService {
         }
     }
 
-    static async getPublicProjects() {
+    static async getPublicProjects(page, limit) {
         try {
-            const projects = await ProjectRepository.getPublicProjects();
+            const projects = await ProjectRepository.getPublicProjects(page, limit);
             return projects || [];
         } catch (error) {
             if(error instanceof ServerError){

@@ -87,6 +87,27 @@ class AuthController {
             })
         }
     }
+
+    static async refresh(req, res){
+        try {
+            const {refreshToken} = req.body
+            const tokens = await AuthService.refreshToken(refreshToken)
+            return res.status(200).json({
+                ok: true,
+                ...tokens,
+                status: 200
+            })
+        } catch (error) {
+            console.error("Refresh error: ", error.message)
+            console.error("Stack: ", error.stack)
+            const statusCode = erro instanceof ServerError ? error.status : 500
+            res.status(statusCode).json({
+                ok: false,
+                message: error.message,
+                status: statusCode
+            })
+        }
+    }
 }
 
 

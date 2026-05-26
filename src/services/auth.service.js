@@ -4,12 +4,14 @@ import jwt from "jsonwebtoken"
 import ENVIRONMENT from "../config/env.config.js";
 import EmailService from "./email.service.js";
 import { ServerError } from "./Error.service.js";
+import UserService from "./user.service.js";
 
 class AuthService {
     /* Helpers */
     static _generateTokens(payload) {
         const accesToken = jwt.sign(payload, ENVIRONMENT.JWT_SECRET, { expiresIn: '15m' })
         const refreshToken = jwt.sign(payload, ENVIRONMENT.JWT_REFRESH_SECRET, { expiresIn: '7d' })
+        return {accesToken, refreshToken}
     }
 
     static async register({ email, username, password, repeatPassword }) {
@@ -135,6 +137,37 @@ class AuthService {
                 console.error("❌ Unexpected error in login:", error.message)
                 console.error("Stack:", error.stack)
                 throw new ServerError(500, error.message || 'Internal error logging in')
+            }
+        }
+    }
+
+    static async refreshToken(refreshToken){
+        try {
+            if(!refreshToken){
+                throw new ServerError(401, "RefresToken is required")
+            }
+
+            const payload = jwt.verify(refreshToken, ENVIRONMENT.JWT_REFRESH_SECRET)
+            const user = await UserRepository.getById(payload.user_id)
+
+            if(!user || !user.active){
+                throw new ServerError(401, "User does not exist or is inactive")
+            }
+
+            const {accesToken, refreshToken: newRefreshToken} = this._generateTokens({
+                user_id: user._id,
+                email: user.email,
+                username: user.usernameS
+            })
+            return {accesToken, refreshToken: newRefreshToken}
+        } catch (error) {
+            if (error instanceof ServerError) {
+                throw error
+            }
+            else {
+                console.error("❌ Unexpected error in refresToken:", error.message)
+                console.error("Stack:", error.stack)
+                throw new ServerError(500, error.message || 'Internal server error in refreshToken')
             }
         }
     }

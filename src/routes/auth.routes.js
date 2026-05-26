@@ -22,4 +22,8 @@ authRoutes.get("/verify-email/:token",
     AuthController.verifyEmail
 )
 
+authRoutes.post("/refres-token",
+    AuthController.refresh
+)
+
 export default authRoutes

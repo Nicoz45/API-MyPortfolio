@@ -39,7 +39,7 @@ class ProjectRepository {
             // Luego obtenemos la página actual de proyectos públicos usando skip y limit para paginar correctamente
             // De esta forma, podemos retornar tanto los proyectos como el total en una sola respuesta, lo que facilita la implementación de la paginación en el frontend
             const [projects, total] = await Promise.all([
-                Project.find({visibility})
+                Project.find({visibility : "public"})
                 .populate("owner", "name email")
                 .skip(skip)
                 .limit(limit),
@@ -95,8 +95,9 @@ class ProjectRepository {
                 },
                 { new: true }
             )
+            return project
         } catch (error) {
-
+            throw new Error(`Error removing star: ${error.message}`)
         }
     }
 
