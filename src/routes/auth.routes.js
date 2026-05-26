@@ -22,7 +22,7 @@ authRoutes.get("/verify-email/:token",
     AuthController.verifyEmail
 )
 
-authRoutes.post("/refres-token",
+authRoutes.post("/refresh-token",
     AuthController.refresh
 )
 

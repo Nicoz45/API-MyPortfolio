@@ -157,7 +157,7 @@ class AuthService {
             const {accesToken, refreshToken: newRefreshToken} = this._generateTokens({
                 user_id: user._id,
                 email: user.email,
-                username: user.usernameS
+                username: user.username
             })
             return {accesToken, refreshToken: newRefreshToken}
         } catch (error) {

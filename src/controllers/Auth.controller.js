@@ -100,7 +100,7 @@ class AuthController {
         } catch (error) {
             console.error("Refresh error: ", error.message)
             console.error("Stack: ", error.stack)
-            const statusCode = erro instanceof ServerError ? error.status : 500
+            const statusCode = error instanceof ServerError ? error.status : 500
             res.status(statusCode).json({
                 ok: false,
                 message: error.message,

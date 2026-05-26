@@ -37,11 +37,11 @@ class ProjectController {
         try {
             const { project } = req
             const projectSelected = await ProjectService.getProjectById(project._id)
-            return res.status(201).json({
+            return res.status(200).json({
                 ok: true,
                 message: "Proyect found Succesfully",
                 project: projectSelected,
-                status: 201
+                status: 200
             })
         } catch (error) {
             console.error("Error getting the project ", error.message)
