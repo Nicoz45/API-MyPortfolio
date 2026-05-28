@@ -1,7 +1,7 @@
-import Router from "express";
-import { authenticateUser, requiredMinRole } from "../middlewares/authMiddleware";
-import { ROLES } from "../constants/roles.constants";
-import UserController from "../controllers/user.controller";
+import {Router} from "express";
+import { authenticateUser, requiredMinRole } from "../middlewares/authMiddleware.js";
+import { ROLES } from "../constants/roles.constants.js";
+import UserController from "../controllers/user.controller.js";
 
 export const userRoutes = Router();
 

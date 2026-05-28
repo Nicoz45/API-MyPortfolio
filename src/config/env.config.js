@@ -12,5 +12,4 @@ const ENVIRONMENT = {
     LOCAL_HOST: process.env.LOCAL_HOST,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET
 }
-console.log(ENVIRONMENT);
 export default ENVIRONMENT

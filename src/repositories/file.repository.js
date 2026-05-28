@@ -1,6 +1,6 @@
 import File from "../Models/File.model.js";
 
-class fileRepository {
+class FileRepository {
     static async createFile(file_data) {
         try {
             const fileCreated = await File.create(file_data)
@@ -74,4 +74,4 @@ class fileRepository {
     }
 }
 
-export default fileRepository
+export default FileRepository

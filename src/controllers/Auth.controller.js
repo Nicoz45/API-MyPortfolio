@@ -6,7 +6,7 @@ import { ServerError } from "../services/Error.service.js"
 class AuthController {
     static async register(req, res) {
         try {
-            console.log("📝 Register request received:", { email: req.body.email, username: req.body.username })
+            console.log("📝 Register request received:", { email: req.body.email, username:  name })
             // Desestructuramos los campos necesarios del cuerpo de la solicitud
             const { email, username, password, repeatPassword } = req.body
 

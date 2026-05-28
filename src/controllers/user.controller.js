@@ -33,10 +33,10 @@ class UserController {
     static async getAll(req, res) {
         try {
             const allUsers = await UserService.getAllUsers()
-            return res.status(201).json({
+            return res.status(200).json({
                 ok: true,
                 message: "Users successfully acquired",
-                status: 201,
+                status: 200,
                 users: allUsers
             })
         } catch (error) {
@@ -55,10 +55,10 @@ class UserController {
         try {
             const { user_id } = req.params
             const userFound = await UserService.getById(user_id)
-            return res.status(201).json({
+            return res.status(200).json({
                 ok: true,
                 message: "User successfully acquired",
-                status: 201,
+                status: 200,
                 user: userFound
             })
         } catch (error) {
@@ -77,10 +77,10 @@ class UserController {
         try {
             const { email } = req.params
             const userFound = await UserService.getByEmail(email)
-            return res.status(201).json({
+            return res.status(200).json({
                 ok: true,
                 message: "User successfully acquired",
-                status: 201,
+                status: 200,
                 user: userFound
             })
         } catch (error) {
@@ -99,10 +99,10 @@ class UserController {
         try {
             const { username } = req.params
             const userFound = await UserService.getByUsername(username)
-            return res.status(201).json({
+            return res.status(200).json({
                 ok: true,
                 message: "User successfully adquired",
-                status: 201,
+                status: 200,
                 user: userFound
             })
         } catch (error) {
@@ -119,8 +119,8 @@ class UserController {
 
     static async deleteById(req, res) {
         try {
-            const { user } = req.body
-            const userToDelete = await UserService.deleteUserById(user._id)
+            const { user_id } = req.params
+            const userToDelete = await UserService.deleteUserById(user_id)
             return res.status(200).json({
                 ok: true,
                 message: "User successfully removed",

@@ -165,8 +165,8 @@ class ProjectService {
             if(!projectToDelete){
                 throw new ServerError(404, "Project not found")
             }
-            await ProjectRepository.deleteProject(project_id)
-            return projectToDelete
+            const deletedProject = await ProjectRepository.deleteProject(project_id)
+            return deletedProject
         } catch (error) {
             if(error instanceof ServerError){
                 throw error
