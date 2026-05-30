@@ -119,7 +119,7 @@ class FileController {
         try {
             const { file_id } = req.params
             const { update_data } = req.body
-            const fileUpdated = await FileService.updateFile(file_id, update_data)
+            const fileUpdated = await FileService.updateFile(file_id, update_data, req.user)
             return res.status(200).json({
                 ok: true,
                 message: "File updated successfully",
@@ -141,7 +141,7 @@ class FileController {
     static async deleteFile(req, res) {
         try {
             const { file_id } = req.params
-            const fileDeleted = await FileService.deleteFile(file_id)
+            const fileDeleted = await FileService.deleteFile(file_id, req.user)
             return res.status(200).json({
                 ok: true,
                 message: "File successfully deleted",
@@ -160,3 +160,5 @@ class FileController {
         }
     }
 }
+
+export default FileController
