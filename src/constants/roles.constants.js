@@ -15,16 +15,16 @@ export const ROLE_HIERARCHY = {
 
 export const ROLE_LIMITS = {
     [ROLES.USER]: {
-        maxProjects: 10,
+        maxProjects: 5,
         maxPrivateProjects: 3,
         maxFilesPerProject: 20,
         maxFileSize: 10 * 1024 * 1024, // 10 MB
         canCustomizeDomain: false,
     },
     [ROLES.PREMIUM]: {
-        maxProjects: 50,
-        maxPrivateProjects: 20,
-        maxFilesPerProject: 100,
+        maxProjects: 20,
+        maxPrivateProjects: 13,
+        maxFilesPerProject: 30,
         maxFileSize: 50 * 1024 * 1024, // 50 MB
         canCustomizeDomain: true,
     },

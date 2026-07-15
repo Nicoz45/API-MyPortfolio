@@ -36,17 +36,18 @@ describe("AuthService", () => {
             }
         }
     }
-
+    // beforeEach se ejecuta antes de cada test, para limpiar los mocks y evitar que se acumulen llamadas de tests anteriores, lo que podria generar falsos positivos o negativos en los tests.
     beforeEach(() => {
         // Limpiamos todos los mocks antes de cada test
         jest.clearAllMocks()
     })
 
     // Register
+    // Testeamos la funcion register del AuthService
     describe("register", () => {
         test("deberia fallar si las contraseñas no coinciden", async () => {
             // Arrange = todo lo necesario antes de ejecutar
-            const userData = { ...mockUserData, repeatPassword: "OtraPassword1" }
+            const userData = { ...mockUserData, repeatPassword: "hashedPassword" }
 
             // Act = ejecutamos la funcion que estamos probando
             const result = AuthService.register(userData)

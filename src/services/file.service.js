@@ -32,7 +32,8 @@ class FileService {
             const limitOfProjects = ROLE_LIMITS[user.role]
             const existingFiles = await FileRepository.getFilesByProject(project)
             if(existingFiles.length >= limitOfProjects.maxFilesPerProject){
-                throw new ServerError(403, `You have reached the file limit for this project (${limits.maxFilesPerProject})`)
+                console.error(403, `You have reached the file limit for this project (${limitOfProjects.maxFilesPerProject})`)
+                throw new ServerError(403, `You have reached the file limit for this project (${limitOfProjects.maxFilesPerProject})`)
             }
             // Verificar que no exista ya un archivo con el mismo path en el proyecto
             const existingFilePath = await FileRepository.getFileByProjectAndPath(project, path)

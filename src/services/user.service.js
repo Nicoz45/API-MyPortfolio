@@ -15,6 +15,7 @@ class UserService {
 
             const existingUsername = await UserRepository.getByUsername(userData.username);
             if (existingUsername) {
+                console.error(400, "Username already in use")
                 throw new ServerError(400, "Username already in use");
             }
 
@@ -93,6 +94,7 @@ class UserService {
     static async deleteUserById(user_id) {
         try {
             if (!mongoose.Types.ObjectId.isValid(user_id)) {
+                console.error("Invalid user ID")
                 throw new ServerError(400, "Invalid user ID");
             }
             const userToDelete = await UserRepository.getById(user_id);

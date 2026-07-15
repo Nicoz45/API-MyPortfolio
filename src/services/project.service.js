@@ -29,6 +29,7 @@ class ProjectService {
         }
 
         // si llegamos aquí no se pudo resolver
+        console.error(404, "Owner not found");
         throw new ServerError(404, "Owner not found");
     }
 
@@ -55,6 +56,7 @@ class ProjectService {
 
             // Corroboramos que el owner y el title existan
             if (!owner || !title) {
+                console.error
                 throw new ServerError(400, "Owner and title are required");
             }
 
@@ -79,6 +81,7 @@ class ProjectService {
             }
             const project = await ProjectRepository.getProjectById(project_id)
             if (!project) {
+                console.error(404, "Project not found")
                 throw new ServerError(404, "Project not found")
             }
             return project
@@ -124,6 +127,7 @@ class ProjectService {
     static async getProjectsByTech(technology) {
         try {
             if(!technology || typeof technology !== 'string'){
+                console.error("Technology must be a non-empty string")
                 throw new ServerError(400, "Technology must be a non-empty string")
             }
             const projects = await ProjectRepository.findByTechStack(technology)
@@ -140,6 +144,7 @@ class ProjectService {
     static async updateProject(project_id, update_data){
         try {
             if(!mongoose.Types.ObjectId.isValid(project_id)){
+                console.error(400, "Invalid project Id")
                 throw new ServerError(400, "Invalid project Id")
             }
             if(update_data.owner !== undefined){
@@ -179,8 +184,10 @@ class ProjectService {
     static async toggleStar(project_id, user_id){
         const project = await ProjectRepository.getProjectById(project_id)
         if(!project){
+            console.error(404, "Project not found")
             throw new ServerError(404, "Project not found")
         }
+        // verificamos si el usuario ya ha marcado con estrella el proyecto, si es así, lo desmarcamos; si no, lo marcamos
         const alreadyStarred = project.starredBy.some(
             id => id.toString() === user_id.toString())
 
