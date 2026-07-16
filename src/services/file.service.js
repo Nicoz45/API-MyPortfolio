@@ -38,6 +38,7 @@ class FileService {
             // Verificar que no exista ya un archivo con el mismo path en el proyecto
             const existingFilePath = await FileRepository.getFileByProjectAndPath(project, path)
             if(existingFilePath){
+                console.error(409,"A file with this path already exists in the project")
                 throw new ServerError(409,"A file with this path already exists in the project")
             }
             // Ahora si pasamos a crear el achivo

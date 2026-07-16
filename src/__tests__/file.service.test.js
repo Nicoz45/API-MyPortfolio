@@ -107,5 +107,28 @@ describe("FileService", () => {
             await expect(result).rejects.toThrow(`You have reached the file limit for this project (${limit})`)
             expect(FileRepository.createFile).not.toHaveBeenCalled()
         })
+
+        test("deberia fallar si existe un archivo con el mismo path", async () => {
+            const fileData = mockFileData;
+            const user = {_id: mockedUserId, role: "user"};
+            const mockedProject = {
+                _id: mockedProjectId,
+                owner: {_id: mockedUserId},
+                title: "Mi portfolio",
+                visibility: "public",
+            };
+            const pathFound = {path: "mocked/path/to/file.txt"}
+            const existingFiles = new Array(5).fill({})
+
+            ProjectRepository.getProjectById.mockResolvedValue(mockedProject)
+            FileRepository.getFilesByProject.mockResolvedValue(existingFiles)
+            FileRepository.getFileByProjectAndPath.mockResolvedValue(pathFound)
+
+            const result = FileService.createFile(fileData, user)
+
+            await expect(result).rejects.toThrow("A file with this path already exists in the project")
+            expect(FileRepository.createFile).not.toHaveBeenCalled()
+        })
     })
+    describe("getFileById", )
 })
