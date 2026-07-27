@@ -6,43 +6,44 @@ import { ROLE_LIMITS, ROLES } from "../constants/roles.constants.js"
 
 
 class FileService {
-    static async createFile(file_data, user){
+    static async createFile(file_data, user) {
         try {
-            const {project, path, content, language} = file_data
+            const { project, path, content, language } = file_data
 
             // Comprobamos que exitan tanto el project y el path
-            if(!project || !path){
+            if (!project || !path) {
                 throw new ServerError(400, "Project and path any required")
             }
             // Comprobamos que el project sea un objeto valido
-            if(!mongoose.Types.ObjectId.isValid(project)){
+            if (!mongoose.Types.ObjectId.isValid(project)) {
                 throw new ServerError(400, "Invalid project ID")
             }
             // Pasamos a obtener el proyecto
             const projectFound = await ProjectRepository.getProjectById(project)
-            if(!projectFound){
+            if (!projectFound) {
                 throw new ServerError(404, "Project not found")
             }
 
             // Verificar que el usuario sea dueño del proyecto
-            if(projectFound.owner._id.toString() !== user._id.toString()){
+            if (projectFound.owner._id.toString() !== user._id.toString()) {
                 throw new ServerError(403, "You can only add files to your own projects")
             }
             // Verificar límite de archivos según rol
             const limitOfProjects = ROLE_LIMITS[user.role]
             const existingFiles = await FileRepository.getFilesByProject(project)
-            if(existingFiles.length >= limitOfProjects.maxFilesPerProject){
+            if (existingFiles.length >= limitOfProjects.maxFilesPerProject) {
                 console.error(403, `You have reached the file limit for this project (${limitOfProjects.maxFilesPerProject})`)
                 throw new ServerError(403, `You have reached the file limit for this project (${limitOfProjects.maxFilesPerProject})`)
             }
             // Verificar que no exista ya un archivo con el mismo path en el proyecto
             const existingFilePath = await FileRepository.getFileByProjectAndPath(project, path)
-            if(existingFilePath){
-                console.error(409,"A file with this path already exists in the project")
-                throw new ServerError(409,"A file with this path already exists in the project")
+            if (existingFilePath) {
+                console.error(409, "A file with this path already exists in the project")
+                throw new ServerError(409, "A file with this path already exists in the project")
             }
             // Ahora si pasamos a crear el achivo
-            const fileCreated = await FileRepository.createFile({project, path, content, language})
+            const fileCreated = await FileRepository.createFile({ project, path, content, language })
+            console.log("File created")
             return fileCreated
 
         } catch (error) {
@@ -54,13 +55,16 @@ class FileService {
         }
     }
 
-    static async getFileById(file_Id){
+    static async getFileById(file_Id) {
         try {
-            if(!mongoose.Types.ObjectId.isValid(file_Id)){
-                throw new ServerError(400, "Invalid File ID")
+            if (!mongoose.Types.ObjectId.isValid(file_Id)) {
+                throw new ServerError(400, "Invalid file ID")
             }
             const file = await FileRepository.getFileById(file_Id)
-            if(!file) {throw new ServerError(404, "File not found")}
+            if (!file) {
+                console.error(404, "File not found")
+                throw new ServerError(404, "File not found")
+            }
             return file || []
         } catch (error) {
             if (error instanceof ServerError) {
@@ -71,15 +75,12 @@ class FileService {
         }
     }
 
-    static async getFileByProject(project_id){
+    static async getFileByProject(project_id) {
         try {
-            if(!mongoose.Types.ObjectId.isValid(project_id)){
+            if (!mongoose.Types.ObjectId.isValid(project_id)) {
                 throw new ServerError(400, "Invalid project ID")
             }
             const fileByProject = await FileRepository.getFilesByProject(project_id)
-            if(!fileByProject){
-                throw new ServerError(404, "File not found")
-            }
             return fileByProject || []
         } catch (error) {
             if (error instanceof ServerError) {
@@ -90,15 +91,12 @@ class FileService {
         }
     }
 
-    static async getFileByLanguage(language){
+    static async getFileByLanguage(language) {
         try {
-            if(!language || typeof language !== "string" ){
+            if (!language || typeof language !== "string") {
                 throw new ServerError(400, "Language must be a non-empty string")
             }
             const fileFound = await FileRepository.getFilesByLanguage(language)
-            if(!fileFound){
-                throw new ServerError(404, "File not found by language")
-            }
             return fileFound || []
         } catch (error) {
             if (error instanceof ServerError) {
@@ -109,19 +107,16 @@ class FileService {
         }
     }
 
-    static async getFileByProjectAndPath(project_id, path){
+    static async getFileByProjectAndPath(project_id, path) {
         try {
-            if(!mongoose.Types.ObjectId.isValid(project_id)){
-                throw new ServerError(400, "Invalid project ID" )
+            if (!mongoose.Types.ObjectId.isValid(project_id)) {
+                throw new ServerError(400, "Invalid project ID")
             }
-            if(!path){
+            if (!path) {
                 throw new ServerError(400, "Path is required")
             }
             const fileFound = await FileRepository.getFileByProjectAndPath(project_id, path)
-            if(!fileFound){
-                throw new ServerError(404, "File not found")
-            }
-            return fileFound || []
+            return fileFound
         } catch (error) {
             if (error instanceof ServerError) {
                 throw error
@@ -131,29 +126,32 @@ class FileService {
         }
     }
 
-    static async updateFile(file_id, update_data, user){
+    static async updateFile(file_id, update_data, user) {
         try {
-            if(!mongoose.Types.ObjectId.isValid(file_id)){
+            if (!mongoose.Types.ObjectId.isValid(file_id)) {
                 throw new ServerError(400, "Invalid project ID")
             }
             const file = await FileRepository.getFileById(file_id)
-            if(!file){
+            if (!file) {
+                console.error("File not found")
                 throw new ServerError(404, "File not found")
             }
             // Verificar que el usuario sea dueño del proyecto al que pertenece el archivo
             const project = await ProjectRepository.getProjectById(file.project._id)
-            if(project.owner._id.toString() !== user._id.toString()){
+            if (project.owner._id.toString() !== user._id.toString()) {
                 throw new ServerError(403, "You can only modify files from your own projects")
             }
             // Si se cambia el path, verificar que no exista otro archivo con ese path
-            if(update_data.path && update_data.path !== file.path){
+            if (update_data.path && update_data.path !== file.path) {
                 const existing = await FileRepository.getFileByProjectAndPath(file.project._id, update_data.path)
-                if(existing){
+                if (existing) {
+                    console.error("A file with this path already exists in the projects")
                     throw new ServerError(409, "A file with this path already exists in the projects")
                 }
             }
 
             const fileUpdated = await FileRepository.updateFile(file_id, update_data)
+            console.log("File updated")
             return fileUpdated
         } catch (error) {
             if (error instanceof ServerError) {
@@ -164,21 +162,23 @@ class FileService {
         }
     }
 
-    static async deleteFile(file_id, user){
+    static async deleteFile(file_id, user) {
         try {
-            if(!mongoose.Types.ObjectId.isValid(file_id)){
+            if (!mongoose.Types.ObjectId.isValid(file_id)) {
                 throw new ServerError(400, "Invalid file ID")
             }
             const fileToDelete = await FileRepository.getFileById(file_id)
-            if(!fileToDelete){
+            if (!fileToDelete) {
+                console.error("File not found")
                 throw new ServerError(404, "File not found")
             }
             const project = await ProjectRepository.getProjectById(fileToDelete.project._id)
-            if(project.owner._id.toString() !== user._id.toString()){
+            if (project.owner._id.toString() !== user._id.toString()) {
                 throw new ServerError(403, "You can only delete files from your own projects")
             }
 
             const deletedFile = await FileRepository.deleteFile(file_id)
+            console.log("File deleted successfully")
             return deletedFile
         } catch (error) {
             if (error instanceof ServerError) {

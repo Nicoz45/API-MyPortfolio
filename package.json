@@ -11,22 +11,23 @@
     "test:watch": "jest --watch"
   },
   "jest": {
-    "transform":{
+    "transform": {
       "^.+\\.js$": "babel-jest"
     },
     "testEnvironment": "node",
-    "testMatch": ["**/__tests__/**/*.test.js"]
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ]
   },
   "keywords": [],
   "author": "Nicoz45",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.29.7",
-    "@jest/globals": "^30.4.1",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "babel-jest": "^30.4.1",
-    "jest": "^30.4.2",
+    "jest": "^30.4.1",
     "nodemon": "^3.1.11",
     "supertest": "^7.2.2"
   },
@@ -35,9 +36,14 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "joi": "^18.0.2",
+    "joi": "^18.2.3",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.1.2",
-    "nodemailer": "^8.0.9"
+    "mongoose": "^9.8.0",
+    "nodemailer": "^9.0.3"
+  },
+  "overrides": {
+    "brace-expansion": "^5.0.8",
+    "minimatch": "^10.2.5",
+    "glob": "^13.0.6"
   }
 }

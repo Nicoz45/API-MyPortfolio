@@ -1,13 +1,13 @@
-import ProjectService from "../services/project.service.js";
-import ProjectRepository from "../repositories/project.repository.js";
-import UserRepository from "../repositories/user.repository.js";
-import { ServerError } from "../services/Error.service.js";
+import ProjectService from "../../services/project.service.js";
+import ProjectRepository from "../../repositories/project.repository.js";
+import UserRepository from "../../repositories/user.repository.js";
+import { ServerError } from "../../services/Error.service.js";
 import mongoose from "mongoose";
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { invalid } from "joi";
 
-jest.mock("../repositories/project.repository.js")
-jest.mock("../repositories/user.repository.js")
+jest.mock("../../repositories/project.repository.js")
+jest.mock("../../repositories/user.repository.js")
 
 describe("ProjectService", () => {
     const validOwnerId = "507f1f77bcf86cd799439011"

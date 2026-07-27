@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
-import AuthService from "../services/auth.service.js";
-import UserRepository from "../repositories/user.repository.js";
-import EmailService from "../services/email.service.js";
-import { ServerError } from "../services/Error.service.js";
+import AuthService from "../../services/auth.service.js";
+import UserRepository from "../../repositories/user.repository.js";
+import EmailService from "../../services/email.service.js";
+import { ServerError } from "../../services/Error.service.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 
 // Mockeamos los modulos externos para no tocar MongoDb ni mandar emails.
-jest.mock("../repositories/user.repository.js")
-jest.mock("../services/email.service.js")
+jest.mock("../../repositories/user.repository.js")
+jest.mock("../../services/email.service.js")
 jest.mock("bcrypt")
 jest.mock("jsonwebtoken")
 

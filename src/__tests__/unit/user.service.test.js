@@ -1,11 +1,11 @@
 import { beforeEach, describe, jest, expect, test } from "@jest/globals"
-import UserService from "../services/user.service"
-import UserRepository from "../repositories/user.repository"
+import UserRepository from "../../repositories/user.repository"
+import UserService from "../../services/user.service"
 
 
-jest.mock("../repositories/user.repository.js")
-jest.mock("../repositories/project.repository.js")
-jest.mock("../services/email.service.js")
+jest.mock("../../repositories/user.repository.js")
+jest.mock("../../repositories/project.repository.js")
+jest.mock("../../services/email.service.js")
 
 describe("UserService", () => {
     // Datos de prueba que vamos a utilizar

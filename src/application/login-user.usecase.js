@@ -6,9 +6,11 @@ class loginUserUseCase{
         try {
             return await AuthService.login(userData)
         } catch (error) {
-            if (error instanceof ServerError) {
+            /* if (error instanceof ServerError) {
+                console.error(error)
                 throw error
-            }
+            } */
+            console.error(error.message)
             throw new ServerError(500, error.message || 'Internal error logging in')
         }
     }
