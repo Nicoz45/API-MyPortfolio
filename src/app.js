@@ -19,6 +19,6 @@ app.get("/status", (req, res) => {
 
 app.use("/auth", authRoutes)
 app.use("/projects", projectRoutes)
-app.use("/user", userRoutes)
+app.use("/api/users", userRoutes)
 
 export default app

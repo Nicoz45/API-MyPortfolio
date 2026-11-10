@@ -9,9 +9,9 @@ import UserService from "./user.service.js";
 class AuthService {
     /* Helpers */
     static _generateTokens(payload) {
-        const accesToken = jwt.sign(payload, ENVIRONMENT.JWT_SECRET, { expiresIn: '15m' })
+        const accessToken = jwt.sign(payload, ENVIRONMENT.JWT_SECRET, { expiresIn: '15m' })
         const refreshToken = jwt.sign(payload, ENVIRONMENT.JWT_REFRESH_SECRET, { expiresIn: '7d' })
-        return {accesToken, refreshToken}
+        return { accessToken, refreshToken }
     }
 
     static async register({ email, username, password, repeatPassword }) {
@@ -41,6 +41,7 @@ class AuthService {
             ? userCreated.toObject()
             : { ...userCreated }
         if (safeUser.passwordHash) delete safeUser.passwordHash
+        console.log(safeUser)
 
         await EmailService.sendVerificationEmail(email, token)
         return { token, user: safeUser }
@@ -78,8 +79,8 @@ class AuthService {
 
             // Buscamos el usuario por email o username
             const userFound = identifier === 'email'
-                ? await UserRepository.getByEmail(emailOrUsername)
-                : await UserRepository.getByUsername(emailOrUsername)
+                ? await UserRepository.getByEmail(emailOrUsername, { includePasswordHash: true })
+                : await UserRepository.getByUsername(emailOrUsername, { includePasswordHash: true })
 
             // Si no se encuentra el usuario, lanzamos un error 404(not found)
             if (!userFound) {
@@ -101,7 +102,7 @@ class AuthService {
             }
 
             // Si todo es correcto, generamos un token JWT con la información del usuario
-            const { accesToken, refreshToken } = this._generateTokens({
+            const { accessToken, refreshToken } = this._generateTokens({
                 user_id: userFound._id,
                 email: userFound.email,
                 username: userFound.username
@@ -112,7 +113,8 @@ class AuthService {
                 : { ...userFound }
             // Eliminamos el hash de la contraseña antes de devolver la información del usuario
             if (safeUser.passwordHash) delete safeUser.passwordHash
-            return { accesToken, refreshToken, user: safeUser }
+            console.log(safeUser)
+            return { accessToken, refreshToken, user: safeUser }
 
 
         } catch (error) {
@@ -140,12 +142,12 @@ class AuthService {
                 throw new ServerError(401, "User does not exist or is inactive")
             }
 
-            const {accesToken, refreshToken: newRefreshToken} = this._generateTokens({
+            const { accessToken, refreshToken: newRefreshToken } = this._generateTokens({
                 user_id: user._id,
                 email: user.email,
                 username: user.username
             })
-            return {accesToken, refreshToken: newRefreshToken}
+            return { accessToken, refreshToken: newRefreshToken }
         } catch (error) {
             if (error instanceof ServerError) {
                 throw error

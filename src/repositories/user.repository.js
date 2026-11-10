@@ -32,9 +32,11 @@ class UserRepository {
         }
     }
 
-    static async getByEmail(email){
+    static async getByEmail(email, { includePasswordHash = false } = {}){
         try {
-            const userFound = await User.findOne({email: email, active: true})
+            const query = User.findOne({email: email, active: true})
+            if (includePasswordHash) query.select("+passwordHash")
+            const userFound = await query
             return userFound
         } catch (error) {
             console.error("Error getting user by email:", error)
@@ -42,9 +44,11 @@ class UserRepository {
         }
     }
 
-    static async getByUsername(username){
+    static async getByUsername(username, { includePasswordHash = false } = {}){
         try {
-            const userFound = await User.findOne({username: username, active: true})
+            const query = User.findOne({username: username, active: true})
+            if (includePasswordHash) query.select("+passwordHash")
+            const userFound = await query
             return userFound
         } catch (error) {
             console.error("Error getting user by username:", error)

@@ -34,7 +34,7 @@ projectRoutes.put("/:id",
     authenticateUser,
     requiredVerifiedEmail,
     loadProject,
-    canModifyProjet,
+    canModifyProjet, 
     validateRequest(updateProjectSchema),
     ProjectController.updateProject
 )

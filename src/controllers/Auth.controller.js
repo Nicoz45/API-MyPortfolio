@@ -6,25 +6,24 @@ import { ServerError } from "../services/Error.service.js"
 class AuthController {
     static async register(req, res) {
         try {
-            console.log("📝 Register request received:", { email: req.body.email, username:  name })
             // Desestructuramos los campos necesarios del cuerpo de la solicitud
             const { email, username, password, repeatPassword } = req.body
 
-            const user = await registerUserCase.execute({ email, username, password, repeatPassword })
-            console.log("✅ User registered successfully:", user._id)
+            const { user: registeredUser } = await registerUserCase.execute({ email, username, password, repeatPassword })
+            console.log("✅ User registered successfully:", registeredUser.email)
             const userinfo = res.status(201).json({
                 ok: true,
                 message: "User registered successfully. Please verify your email.",
                 user: {
-                    id: user._id,
-                    email: user.email,
-                    username: user.username
+                    id: registeredUser._id,
+                    email: registeredUser.email,
+                    username: registeredUser.username
                 }
             })
-            console.log("Register sucessfully for user: ", user._id)
+            console.log("Register successfully for user:", { username: registeredUser.username })
         } catch (error) {
             console.error("❌ Register error:", error.message)
-            console.error("Stack:", error.stack)
+            console.log(error.message)
             const statusCode = error instanceof ServerError ? error.status : 500
             res.status(statusCode).json({
                 ok: false,
@@ -46,8 +45,7 @@ class AuthController {
                 status: 200
             })
         } catch (error) {
-            console.error("❌ Email verification error:", error.message)
-            console.error("Stack:", error.stack)
+            console.error("❌ Email verification error:", error.message, error.status)
             if (error.status) {
                 res.send({
                     ok: false,
@@ -67,18 +65,17 @@ class AuthController {
     static async login(req, res) {
         try {
             const {emailOrUsername, password} = req.body
-            const { accesToken, refreshToken, user } = await loginUserCase.execute({emailOrUsername, password})
+            const { accessToken, refreshToken, user } = await loginUserCase.execute({emailOrUsername, password})
             const userInfo = res.status(200).json({
                 ok: true,
                 message: "Login successful",
-                accesToken,
+                accessToken,
                 refreshToken,
-                user: { email: user.email, username: user.username }
+                user: { email: user.email, username: user.username, role: user.role}
             })
                 console.log("✅ Login successful for user:", user._id)
         } catch (error) {
             console.error("❌ Login error:", error.message)
-            console.error("Stack:", error.stack)
             const statusCode = error instanceof ServerError ? error.status : 500
             res.status(statusCode).json({
                 ok: false,
@@ -99,7 +96,6 @@ class AuthController {
             })
         } catch (error) {
             console.error("Refresh error: ", error.message)
-            console.error("Stack: ", error.stack)
             const statusCode = error instanceof ServerError ? error.status : 500
             res.status(statusCode).json({
                 ok: false,

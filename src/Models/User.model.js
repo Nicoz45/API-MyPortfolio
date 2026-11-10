@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema({
     },
     passwordHash: {
         type: String,
-        required: true
+        required: true,
+        select: false // No incluir el hash de la contraseña en las consultas por defecto
     },
     role: {
         type: String,

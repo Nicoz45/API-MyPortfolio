@@ -165,7 +165,7 @@ describe("AuthService", () => {
                 password: "Test1234"
             })
 
-            expect(result).toHaveProperty("accesToken")
+            expect(result).toHaveProperty("accessToken")
             expect(result).toHaveProperty("refreshToken")
             expect(result).toHaveProperty("user")
             expect(result.user.passwordHash).toBeUndefined()
@@ -181,12 +181,11 @@ describe("AuthService", () => {
                 password: "Test1234"
             })
 
-            expect(UserRepository.getByUsername).toHaveBeenCalledWith("testuser")
+            expect(UserRepository.getByUsername).toHaveBeenCalledWith("testuser", { includePasswordHash: true })
             expect(UserRepository.getByEmail).not.toHaveBeenCalled()
         })
     })
 })
-
 
 
 
