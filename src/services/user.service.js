@@ -1,6 +1,8 @@
 import UserRepository from "../repositories/user.repository.js";
 import { ServerError } from "./Error.service.js";
 import mongoose from "mongoose";
+import bcrypt from "bcrypt"
+import { ROLES } from "../constants/roles.constants.js";
 
 class UserService {
     static async createUser(userData) {
@@ -8,18 +10,36 @@ class UserService {
             if (!userData || typeof userData !== "object" || Array.isArray(userData)) {
                 throw new ServerError(400, "User data is required");
             }
-            const existingEmail = await UserRepository.getByEmail(userData.email);
+
+            const { email, username, password } = userData
+            const role = userData.role || ROLES.USER
+
+            const permittedRoles = Object.values(ROLES)
+
+            if(!permittedRoles.includes(role)){
+                throw new ServerError(400, "Invalid Role")
+            }
+
+            const existingEmail = await UserRepository.getByEmail(email);
             if (existingEmail) {
                 throw new ServerError(400, "Email already in use");
             }
 
-            const existingUsername = await UserRepository.getByUsername(userData.username);
+            const existingUsername = await UserRepository.getByUsername(username);
             if (existingUsername) {
                 console.error(400, "Username already in use")
                 throw new ServerError(400, "Username already in use");
             }
 
-            const userCreated = await UserRepository.createUser(userData);
+            const hashedPassword = await bcrypt.hash(password, 12)
+
+            const userCreated = await UserRepository.createUser({
+                username: username,
+                email: email,
+                passwordHash: hashedPassword,
+                role: role,
+                verified_email: true
+            });
             return userCreated;
         } catch (error) {
             if (error instanceof ServerError) {

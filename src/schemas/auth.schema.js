@@ -1,18 +1,17 @@
 import joi from "joi";
+import { ROLES } from "../constants/roles.constants.js";
 
-export const registerSchema = joi.object({
-    email: joi.string()
+const emailRule = joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'org', 'es'] } })
-        .required()
         .messages({
             'string.email': 'Email must be a valid email address',
             'string.empty': 'Email is required',
             'any.required': 'Email is required'
-        }),
-    username: joi.string()
+        })
+
+const usernameRule = joi.string()
         .min(4)
         .max(30)
-        .required()
         .pattern(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/)
         .messages({
             'string.min': 'username must be at least 4 characters long',
@@ -20,11 +19,11 @@ export const registerSchema = joi.object({
             'string.pattern.base': 'username can only contain letters, numbers and spaces',
             'string.empty': 'username is required',
             'any.required': 'username is required'
-        }),
-    password: joi.string()
+        })
+
+const passwordRule = joi.string()
         .min(8)
         .max(200)
-        .required(true)
         .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
         .messages({
             'string.min': 'Password must be at least 8 characters long',
@@ -32,7 +31,15 @@ export const registerSchema = joi.object({
             'string.pattern.base': 'Password must contain at least one lowercase letter, one uppercase letter, and one number',
             'string.empty': 'Password is required',
             'any.required': 'Password is required'
-        }),
+        })
+
+export const registerSchema = joi.object({
+    email: emailRule
+        .required(),
+    username: usernameRule
+        .required(),
+    password: passwordRule
+        .required(),
     repeatPassword: joi.string()
         .required()
         .valid(joi.ref('password'))
@@ -62,3 +69,17 @@ export const loginSchema = joi.object({
         })
 })
 
+export const createUserSchema = joi.object({
+    email: emailRule
+        .required(),
+    username: usernameRule
+        .required(),
+    password: passwordRule
+        .required(),
+    role: joi.string()
+        .valid(...Object.values(ROLES))
+        .default(ROLES.USER)
+        .messages({
+            'any.only': 'Invalid Role'
+        })
+})

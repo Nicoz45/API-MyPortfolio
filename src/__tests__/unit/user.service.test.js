@@ -63,7 +63,7 @@ describe("UserService", () => {
             expect(UserRepository.createUser).not.toHaveBeenCalled()
         })
 
-        test("deberia crear al usuario exitosamente", async () => {
+        test("deberia crear al usuario con rol user cuando no se envia uno", async () => {
             // Arrange = todo lo necesario antes de ejecutar
             UserRepository.getByEmail.mockResolvedValue(null)
             UserRepository.getByUsername.mockResolvedValue(null)
@@ -77,7 +77,13 @@ describe("UserService", () => {
             expect(UserRepository.getByEmail).toHaveBeenCalledWith(mockUserData.email)
             expect(UserRepository.getByUsername).toHaveBeenCalledWith
             (mockUserData.username)
-            expect(UserRepository.createUser).toHaveBeenCalledWith(mockUserData)
+            expect(UserRepository.createUser).toHaveBeenCalledWith(expect.objectContaining({
+                username: mockUserData.username,
+                email: mockUserData.email,
+                passwordHash: expect.any(String),
+                role: "user",
+                verified_email: true
+            }))
             expect(UserRepository.createUser).toHaveBeenCalledTimes(1)            
         })
     })

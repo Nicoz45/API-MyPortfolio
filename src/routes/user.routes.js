@@ -2,6 +2,8 @@ import {Router} from "express";
 import { authenticateUser, requiredMinRole } from "../middlewares/authMiddleware.js";
 import { ROLES } from "../constants/roles.constants.js";
 import UserController from "../controllers/user.controller.js";
+import { validateRequest } from "../middlewares/validateRequest.js";
+import { createUserSchema } from "../schemas/auth.schema.js";
 
 export const userRoutes = Router();
 
@@ -11,6 +13,7 @@ console.log("✅ user Routes initialized");
 userRoutes.post("/", 
     authenticateUser,
     requiredMinRole(ROLES.ADMIN),
+    validateRequest(createUserSchema),
     UserController.createUser
 )
 
