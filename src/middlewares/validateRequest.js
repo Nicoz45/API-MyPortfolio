@@ -23,7 +23,7 @@ export const validateRequest = (schema, options = {}) => {
             const dataToValidate = req[location];
 
             const { error, value } = schema.validate(dataToValidate, {
-                abortEarly,
+                abortEarly, 
                 stripUnknown
             });
 
