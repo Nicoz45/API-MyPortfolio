@@ -59,7 +59,7 @@ export const canViewProject = async (req, res, next) => {
     next()
 }
 
-export const canModifyProjet = async (req, res, next) => {
+export const canModifyProject = async (req, res, next) => {
     if(!req.project){
         return res.status(404).json({
             ok: false,
