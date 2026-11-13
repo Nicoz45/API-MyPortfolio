@@ -21,10 +21,20 @@ class ProjectRepository {
 
     static async getProjectsByOwner(ownerId) {
         try {
-            const projects = await Project.find({ owner: ownerId }).populate("owner", "name email")
+            const projects = await Project.find({ owner: ownerId, visibility: "public" }).populate("owner", "name email")
             return projects
         } catch (error) {
             throw new Error(`Error getting projects by owner: ${error.message}`)
+        }
+    }
+
+    static async getMyProjects(ownerId){
+        try {
+            const myProjects = await Project.find({owner: ownerId})
+            .populate("owner", "name email")
+            return myProjects
+        } catch (error) {
+            throw new Error(`Error getting projects: ${error.message}`)
         }
     }
 

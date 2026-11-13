@@ -97,6 +97,34 @@ class ProjectController {
         } catch (error) {
             console.error("Error getting projects by owner ", error.message);
             console.error("Stack ", error.stack);
+            const statusCode = error instanceof ServerError ? error.status : 500;
+            return res.status(statusCode).json({
+                ok: false,
+                message: error.message,
+                status: statusCode,
+            })
+        }
+    }
+
+    static async getMyProjects(req, res) {
+        try {
+            const ownerId = req.user._id
+            const myProjects = await ProjectService.getMyProjects(ownerId)
+            return res.status(200).json({
+                ok: true,
+                message: "Project retrieve successfully",
+                projects: myProjects,
+                status: 200
+            })
+        } catch (error) {
+            console.error("Error getting projects", error.message);
+            console.error("Stack ", error.stack);
+            const statusCode = error instanceof ServerError ? error.status : 500;
+            return res.status(statusCode).json({
+                ok: false,
+                message: error.message,
+                status: statusCode,
+            })
         }
     }
 

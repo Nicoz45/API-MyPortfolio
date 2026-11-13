@@ -36,6 +36,7 @@ class ProjectService {
     // asegura que techStack sea un array limpio
     static _normalizeTechStack(data) {
         if (!data || data.techStack == null) return;
+
         if (!Array.isArray(data.techStack)) {
             if (typeof data.techStack === 'string') {
                 data.techStack = data.techStack
@@ -56,7 +57,7 @@ class ProjectService {
 
             // Corroboramos que el owner y el title existan
             if (!owner || !title) {
-                console.error
+                console.error("Owner and title are required")
                 throw new ServerError(400, "Owner and title are required");
             }
 
@@ -108,6 +109,19 @@ class ProjectService {
             }
             console.error("Unexpected error in ProjectService ", error.message)
             throw new ServerError(500, error.message || "Error getting projects by owner")
+        }
+    }
+
+    static async getMyProjects(owner){
+        try {
+            const myProjects = await ProjectRepository.getMyProjects(owner)
+            return myProjects || []
+        } catch (error) {
+            if(error instanceof ServerError){
+                throw error
+            }
+            console.error("Unexpected error in Project service", error.message)
+            throw new ServerError(500, error.message || "Error getting Projects")
         }
     }
 

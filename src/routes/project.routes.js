@@ -14,6 +14,10 @@ projectRoutes.get("/tech/:tech", ProjectController.getProjectsByTech)
 // opcionalmente buscar por dueño
 projectRoutes.get("/owner/:owner", ProjectController.getByOwner)
 
+projectRoutes.get("/mine",
+    authenticateUser,
+    ProjectController.getMyProjects
+)
 // GET / :id > carga el proyecto, verifica visibilidad
 projectRoutes.get("/:id",
     loadProject,
