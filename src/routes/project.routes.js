@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticateUser, requiredVerifiedEmail } from "../middlewares/authMiddleware.js";
-import { canModifyProjet, canViewProject, checkProjectLimits, loadProject } from "../middlewares/project.middleware.js";
+import { canModifyProject, canViewProject, checkProjectLimits, loadProject } from "../middlewares/project.middleware.js";
 import ProjectController from "../controllers/project.controller.js";
 import { validateRequest } from "../middlewares/validateRequest.js";
 import { createProjectSchema, updateProjectSchema } from "../schemas/project.schema.js";
@@ -34,7 +34,7 @@ projectRoutes.put("/:id",
     authenticateUser,
     requiredVerifiedEmail,
     loadProject,
-    canModifyProjet, 
+    canModifyProject,
     validateRequest(updateProjectSchema),
     ProjectController.updateProject
 )
@@ -42,6 +42,8 @@ projectRoutes.put("/:id",
 projectRoutes.delete("/:id",
     authenticateUser,
     requiredVerifiedEmail,
+    loadProject,
+    canModifyProject,
     ProjectController.deleteProject
 )
 
