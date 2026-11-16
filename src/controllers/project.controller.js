@@ -4,7 +4,9 @@ import ProjectService from "../services/project.service.js"
 class ProjectController {
     static async createProject(req, res) {
         try {
-            const { owner, title, description, techStack, repositoryLink, liveDemoLink, visibility } = req.user._id
+            const owner = req.user._id
+            console
+            const { title, description, techStack, repositoryLink, liveDemoLink, visibility } = req.body
             const projectCreated = await ProjectService.createProject({
                 owner,
                 title,
