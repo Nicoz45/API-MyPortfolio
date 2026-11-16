@@ -47,7 +47,7 @@ class AuthController {
         } catch (error) {
             console.error("❌ Email verification error:", error.message, error.status)
             if (error.status) {
-                res.send({
+                res.status(error.status).json({
                     ok: false,
                     message: error.message,
                     status: error.status
@@ -66,7 +66,7 @@ class AuthController {
         try {
             const {emailOrUsername, password} = req.body
             const { accessToken, refreshToken, user } = await loginUserCase.execute({emailOrUsername, password})
-            const userInfo = res.status(200).json({
+            res.status(200).json({
                 ok: true,
                 message: "Login successful",
                 accessToken,
