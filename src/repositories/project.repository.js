@@ -12,7 +12,7 @@ class ProjectRepository {
 
     static async getProjectById(projectId) {
         try {
-            const project = await Project.findById(projectId).populate("owner", "name email");
+            const project = await Project.findById(projectId).populate("owner", "username email");
             return project;
         } catch (error) {
             throw new Error(`Error getting project: ${error.message}`);
@@ -21,7 +21,7 @@ class ProjectRepository {
 
     static async getProjectsByOwner(ownerId) {
         try {
-            const projects = await Project.find({ owner: ownerId, visibility: "public" }).populate("owner", "name email")
+            const projects = await Project.find({ owner: ownerId, visibility: "public" }).populate("owner", "username email")
             return projects
         } catch (error) {
             throw new Error(`Error getting projects by owner: ${error.message}`)
@@ -31,7 +31,7 @@ class ProjectRepository {
     static async getMyProjects(ownerId){
         try {
             const myProjects = await Project.find({owner: ownerId})
-            .populate("owner", "name email")
+            .populate("owner", "username email")
             return myProjects
         } catch (error) {
             throw new Error(`Error getting projects: ${error.message}`)
@@ -50,7 +50,7 @@ class ProjectRepository {
             // De esta forma, podemos retornar tanto los proyectos como el total en una sola respuesta, lo que facilita la implementación de la paginación en el frontend
             const [projects, total] = await Promise.all([
                 Project.find({visibility : "public"})
-                .populate("owner", "name email")
+                .populate("owner", "username email")
                 .skip(skip)
                 .limit(limit),
                 Project.countDocuments({visibility: "public"})
@@ -113,7 +113,7 @@ class ProjectRepository {
 
     static async findByTechStack(technology) {
         try {
-            const projects = await Project.find({ techStack: technology, visibility: "public" }).populate("owner", "name email")
+            const projects = await Project.find({ techStack: technology, visibility: "public" }).populate("owner", "username email")
             return projects
         } catch (error) {
             throw new Error(`Error finding projects by tech: ${error.message}`)
