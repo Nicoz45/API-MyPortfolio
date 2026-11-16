@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateUser, requiredVerifiedEmail } from "../middlewares/authMiddleware.js";
+import { authenticateUser, optionalAuth, requiredVerifiedEmail } from "../middlewares/authMiddleware.js";
 import { canModifyProject, canViewProject, checkProjectLimits, loadProject } from "../middlewares/project.middleware.js";
 import ProjectController from "../controllers/project.controller.js";
 import { validateRequest } from "../middlewares/validateRequest.js";
@@ -20,6 +20,7 @@ projectRoutes.get("/mine",
 )
 // GET / :id > carga el proyecto, verifica visibilidad
 projectRoutes.get("/:id",
+    optionalAuth,
     loadProject,
     canViewProject,
     ProjectController.getById
