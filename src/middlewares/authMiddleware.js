@@ -3,7 +3,6 @@ import { ROLE_HIERARCHY } from "../constants/roles.constants.js"
 import UserRepository from "../repositories/user.repository.js"
 import { ServerError } from "../services/Error.service.js"
 import jwt from "jsonwebtoken"
-import ProjectService from "../services/project.service.js"
 
 /* -------- helpers -------- */
 const validateUserSession = async (authHeader) => {
@@ -28,24 +27,8 @@ const validateUserSession = async (authHeader) => {
     return userSessionData
 }
 
-
-
-//Middleware para autenticación y autorización de usuarios
-export const authenticateUser = async (req, res, next) => {
-
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith('Bearer')) {
-        throw new ServerError(401, "There is no session header")
-    }
-
-    try {
-        const user = await validateUserSession(authHeader)
-
-        req.user = user
-        return next()
-
-    } catch (error) {
-        if (error instanceof jwt.TokenExpiredError) {
+const handleAuthError = (error, res) => {
+    if (error instanceof jwt.TokenExpiredError) {
             return res.status(401).json({
                 ok: false,
                 message: "Expired token",
@@ -74,6 +57,24 @@ export const authenticateUser = async (req, res, next) => {
                 status: 500
             })
         }
+} 
+
+
+
+//Middleware para autenticación y autorización de usuarios
+export const authenticateUser = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization
+        if (!authHeader || !authHeader.startsWith('Bearer')) {
+            throw new ServerError(401, "There is no session header")
+        }
+        const user = await validateUserSession(authHeader)
+
+        req.user = user
+        return next()
+
+    } catch (error) {
+        return handleAuthError(error, res)
     }
 }
 
@@ -201,45 +202,16 @@ export const requiredVerifiedEmail = (req, res, next) => {
 }
 
 export const optionalAuth = async (req, res, next) => {
-
-    const authHeader = req.headers.authorization
-
-    if (!authHeader) return next()
-
     try {
+        const authHeader = req.headers.authorization
+
+        if (!authHeader) return next()
         const user = await validateUserSession(authHeader)
 
         req.user = user
         return next()
 
     } catch (error) {
-        if (error instanceof jwt.TokenExpiredError) {
-            return res.status(401).json({
-                ok: false,
-                message: "Expired token",
-                status: 401
-            })
-        }
-        else if (error instanceof jwt.JsonWebTokenError) {
-            return res.status(401).json({
-                ok: false,
-                message: "Invalid token",
-                status: 401
-            })
-        }
-        else if (error.status) {
-            return res.status(error.status).json({
-                ok: false,
-                message: error.message,
-                status: error.status
-            })
-        }
-        else {
-            return res.status(500).json({
-                ok: false,
-                message: "Internal server Error",
-                status: 500
-            })
-        }
+        return handleAuthError(error, res)
     }
 } 
