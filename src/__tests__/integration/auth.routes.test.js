@@ -128,13 +128,14 @@ describe("POST /auth/login", () => {
         const passwordHash = "hashedPassword"
         const userCreated = {
             _id: "507f1f77bcf86cd799439054",
-            username: userData.username,
-            email: userData.email,
+            username: "nicoTest",
+            email: "nicoTest@gmail.com",
             passwordHash: passwordHash,
             verified_email: true
         }
         UserRepository.getByEmail.mockResolvedValue(userCreated)
         bcrypt.compare.mockResolvedValue(true)
+        jwt.sign.mockReturnValue("mockedToken")
 
         const response = await request(app).post("/auth/login").send(userData)
 
@@ -150,9 +151,10 @@ describe("POST /auth/login", () => {
 
 describe("GET /auth/verify-email/:token", () => {
     test("deberia fallar si el token es invalido", async () => {
-        jwt.verify.mockResolvedValue(invalidToken)
+        const invalidToken = "invalid-token"
+        jwt.verify.mockReturnValue({})
 
-        const response = await request(app).get("/auth/verify-email/:token").send(invalidToken)
+        const response = await request(app).get(`/auth/verify-email/${invalidToken}`)
 
         expect(response.status).toBe(400)
         expect(response.body.message).toBe("Invalid token")
